@@ -5,22 +5,23 @@
  * (note that ofMain.h is also included in ofApp.h)
  */
 
-#pragma once		
+#pragma once
 #include "ofMain.h"
 
 class Ball {
-
+    
 public:
-
+    
     void setup(float size, float bounceFactor);     // init size and ball's "bounciness"
     void update(glm::vec2 force);                   // apply force
-	void draw();
+    void draw();
     
-    glm::vec2 pos;		// position
-    glm::vec2 vel;		// velocity (speed + direction)
+    glm::vec2 pos;        // position
+    glm::vec2 vel;        // velocity (speed + direction)
     
     float bounce;       // "bounciness" factor, from 0.0 to 1.0
     float radius;       // ball size
     
-
+    
 };
+
