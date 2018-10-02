@@ -2,48 +2,43 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    ofBackground(0);
-    ofSetCircleResolution(100);
-    
-    gravity = glm::vec2(0,0);             // start with no gravity
-    wind = glm::vec2(0,0);
-    
-    for (int i=0; i<numBalls; i++){                 // numBalls defined in ofApp.h
+    for (int i = 0; i < 10; i ++){
+        float w = ofRandom(20, 50);
+        squares[i].setup(ofGetWidth()*0.5, ofGetHeight()*0.5, w, w);
+        //float speed = squares[i].w * 0.25;
+        float area = squares[i].w * squares[i].h;
         
-        float radius = ofMap(i, 0, numBalls, 50, 5);
-        float bounce = ofMap(radius, 5, 50, 0.9, 0.3);    // assign a bounciness factor (0-1 max range)
+        //        int dir = 1;
+        //        if (ofRandom(1)<0.5){
+        //            dir *= -1;
+        //        }
         
-        balls[i].setup(radius, bounce);                    // initialize
+        float speed = ofMap(area, 400, 2500, 20, 5);
+        squares[i].vel.x = speed * ofRandom(-1,1);
+        squares[i].vel.y = speed * ofRandom(-1,1);
+        
+        cout << "square["<< i << "] area =" << area
+        << " speed = " << speed << endl;
+        
+        //squares[i].color = ofColor(speed);
+        float hue = ofMap(speed, 5, 20, 100, 200);
+        squares[i].color = ofColor::fromHsb(hue, 255, 200);
     }
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    // mouse position alters gravity / wind
-    gravity.x = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 0.1);
-    gravity.y = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 1);
-    wind.x = ofMap(ofGetMouseX(), 0, ofGetWidth(), 3,-5);
-    wind.y = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0, 0);
-    
-    for (int i=0; i<numBalls; i++){
-        balls[i].update(gravity);
+    for (int i = 0; i < 10; i ++){
+        squares[i].update();
     }
-    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    for (int i=0; i<numBalls; i++){
-        balls[i].draw();
+    for (int i = 0; i < 10; i ++){
+        squares[i].draw();
     }
-    
-    // draw some info on screen
-    string gravityInfo = "'gravity' force (x,y): " + ofToString(gravity, 2);
-    ofDrawBitmapString(gravityInfo, 20, 20);
-    
 }
 
 //--------------------------------------------------------------
@@ -68,10 +63,6 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-//    if(ofGetMouseX()<ofGetWidth()/2){
-    for(int i=0; i<numBalls; i++){
-        balls[i].update(wind);
-    }
     
 }
 

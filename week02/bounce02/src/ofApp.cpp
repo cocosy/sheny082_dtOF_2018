@@ -12,9 +12,9 @@ void ofApp::setup(){
         // run the square setup function, offsetting x and y positions by (i * 50) pixels
         float w = ofGetWidth()/2 ;      // width
         float h = ofGetHeight()/2;      // height
-        float d = 300;
-        float x = ofGetWidth()/2 *sin(i/PI);
-        float y = ofGetHeight()/2 *cos(i/PI);
+        float d = 200;
+        float x = 50 * cos(PI/2 -(TWO_PI/10) * i);
+        float y = 50 * sin(PI/2 -(TWO_PI/10) * i);
         float z = 200;
         
         // we access array elements by index number, like array[index]
@@ -23,9 +23,8 @@ void ofApp::setup(){
         
         // set starting movement direction
         
-        petals[i].dirX = sin(i/PI);        // move 5 pixels right per frame to start
-        petals[i].dirY = cos(i/PI);        // move 5 pixels down per frame
-        
+        petals[i].dirX = 0;        // move 5 pixels right per frame to start
+        petals[i].dirY = 0;        // move 5 pixels down per frame
     }
     
 }

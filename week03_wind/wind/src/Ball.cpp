@@ -75,8 +75,8 @@ void Ball::draw() {
     ofColor color  = color1.getLerped(color2, percent);
     
     ofSetColor(color);
-    
-    ofDrawCircle(pos, radius);        // draw
+    ofDrawRectangle(pos,radius,radius);
+  //  ofDrawCircle(pos, radius);        // draw
     ofSetColor(255);                // restore global white draw color
 }
 
