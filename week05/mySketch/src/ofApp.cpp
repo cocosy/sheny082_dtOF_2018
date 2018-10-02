@@ -8,21 +8,27 @@ void ofApp::setup(){
     ofSetCircleResolution(100);
     
     // create 10 balls in array
-    int nBalls = 5;    // needs to match array size delcared in ofApp.h!
+    int nBalls = 20;    // needs to match array size delcared in ofApp.h!
 
+    
+   
         
     for (int i=0; i<nBalls; i++){
         Ball ball;
         
         float radius      = ofMap(i, 0, nBalls-1, 50, 10);
-        float lerpness    = ofMap(radius, 10, 50, 0.1,.001);
+        float lerpness    = ofMap(radius, 10, 50, 0.05,0.001);
 
-            
+      
+        
         glm::vec2 pos;
         pos.x               = ofGetWidth() * 0.5;      //  random x pos in box
         pos.y               = ofGetHeight() * 0.5;
         
             ball.setup(pos, radius, lerpness);
+//
+    
+        
             balls.push_back(ball);
         }
 
@@ -30,8 +36,20 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    float time = ofGetElapsedTimef(); // seconds since the app starts
+    float cosOfTime = cos(time * 2.0) * 0.5;
+    glm::vec2 vel;
+    
+    vel.x              = ofMap(cosOfTime,-1,1,-20,20); // random velocity
+    cout << "vel" << vel.x << endl;
+    vel.y              = 0;
+    //
+  
+    
      for (int i=0; i<balls.size(); i++){
-     balls[i].update();
+     balls[i].update(vel);
+
+     
      }
 }
 

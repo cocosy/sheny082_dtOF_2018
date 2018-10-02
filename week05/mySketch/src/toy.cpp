@@ -10,30 +10,40 @@
 void Ball::setup(glm::vec2 position, float ballRadius, float ballLerp){
     //glm::vec2 position,
     //init ball variables
+    
     pos = position;
     radius = ballRadius;
     lerp = ballLerp;
+    
+    vel = glm::vec2(0,0);
 
-    ofColor color = ofColor(ofMap(radius,50,10, 0,255),ofMap(radius, 10,50, 0,255),0);
+  
  
 }
 
-void Ball::update() {
+void Ball::update(glm::vec2 velocity) {
+    vel = velocity;
     glm::vec2 mouse;
     mouse.x = ofGetMouseX();
     mouse.y = ofGetMouseY();
     
+    pos += vel*lerp ;     // apply velocity
     pos += (mouse - pos) * lerp;
+//    cout << "num: " << vel <<endl;
     
 
 }
 //
 void Ball::draw() {
-    
+    ofColor color = ofColor(ofMap(radius,50,10, 0,255),ofMap(radius, 10,50, 0,255),0);
     ofSetColor(color);
     ofDrawCircle(pos, radius);
     ofSetColor(255);        // restore global white color
 }
+//
+//void Ball::setVelocity(glm::vec2 velocity){
+//
+//}
 
 
 

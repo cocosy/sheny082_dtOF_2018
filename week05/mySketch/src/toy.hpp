@@ -13,10 +13,13 @@ class Ball {
 public:
 
     void setup(glm::vec2 position, float ballRadius, float ballLerp);   // init size and ball's "bounciness" glm::vec2 position
-    void update();
+    void update(glm::vec2 velocity);
     void draw();
     
+//    void setVelocity();
+    
     glm::vec2 pos;
+    glm::vec2 vel;      // velocity
     ofColor color;
     float radius;
 
