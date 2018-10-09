@@ -8,10 +8,7 @@ void ofApp::setup(){
     ofSetCircleResolution(100);
     
     // create 10 balls in array
-    int nBalls = 20;    // needs to match array size delcared in ofApp.h!
-
-    
-   
+    int nBalls = 10;    // needs to match array size delcared in ofApp.h!
         
     for (int i=0; i<nBalls; i++){
         Ball ball;
@@ -23,13 +20,11 @@ void ofApp::setup(){
         
         glm::vec2 pos;
         pos.x               = ofGetWidth() * 0.5;      //  random x pos in box
-        pos.y               = ofGetHeight() * 0.5;
+        pos.y               = ofGetHeight() * 0.5 + 150;
         
-            ball.setup(pos, radius, lerpness);
-//
-    
+        ball.setup(pos, radius, lerpness);
         
-            balls.push_back(ball);
+        balls.push_back(ball);
         }
 
 }
@@ -37,13 +32,12 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     float time = ofGetElapsedTimef(); // seconds since the app starts
-    float cosOfTime = cos(time * 2.0) * 0.5;
+    float cosOfTime = cos(time * 5.0) * 0.7 ;
     glm::vec2 vel;
     
-    vel.x              = ofMap(cosOfTime,-1,1,-20,20); // random velocity
+    vel.x           = ofMap(cosOfTime,-1,1,-30,30); // random velocity//ofMap(cosOfTime,-1,1,-20,20)
     cout << "vel" << vel.x << endl;
-    vel.y              = 0;
-    //
+    vel.y           = 0;
   
     
      for (int i=0; i<balls.size(); i++){
@@ -60,11 +54,14 @@ void ofApp::draw(){
     ofColor purple = ofColor(255,0,255);       // another way to create colors
     ofSetColor(purple);
     ofDrawBitmapString("Press 't' to open the box!", ofGetWidth() * 0.5, ofGetHeight() - 200);
+
+    //box
+    ofSetColor(255,0,255);
+    ofDrawRectangle( ofGetWidth() * 0.5 - 100, ofGetHeight()* 0.5 - 100, 200, 200);
     
     if(clicked){
         for (int i=0; i<balls.size(); i++){
             balls[i].draw();}
-   
 }
 }
 

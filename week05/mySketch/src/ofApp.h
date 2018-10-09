@@ -26,5 +26,6 @@ class ofApp : public ofBaseApp{
 
 //        Ball balls[10];    // array of 10 Balls, see class declaration above
         bool clicked;
-        vector<Ball> balls; 
+        vector<Ball> balls;
+//        glm::vec2 pos;
 };
