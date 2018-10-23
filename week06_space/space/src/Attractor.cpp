@@ -2,6 +2,9 @@
 //  Attractor.cpp
 //
 
+// Source code for section 1.ii.d. Star Line Brush from the Introduction
+// to Graphics chapter of ofBook (https://github.com/openframeworks/ofBook).
+//https://github.com/openframeworks/ofBook/blob/master/chapters/intro_to_graphics/code/1_ii_d_Star_Line_Brush.sketch
 
 #include "Attractor.hpp"
 

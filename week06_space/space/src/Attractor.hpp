@@ -12,7 +12,7 @@
 class Attractor {
 public:
 	
-	Attractor();		// default constructor
+	Attractor();	                    	// default constructor - name of the class - run anytime you create a new obj - similar setup
 	Attractor(glm::vec2 _pos, float _mass);	// alternative constructor
 	
 	glm::vec2 getForce(Mover m);
