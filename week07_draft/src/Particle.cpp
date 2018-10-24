@@ -1,4 +1,3 @@
-//
 //  Particle.cpp
 //  wk06_particle_system
 //
@@ -9,21 +8,18 @@
 
 
 Particle::Particle()
-{
-    
-    // default constructor:
+{   // default constructor:
     // Particle particle = Particle();
     
     pos = glm::vec2(0,0);
     vel = glm::vec2(0,0);
     acc = glm::vec2(0,0);
-    
-
 }
+
+
 
 Particle::Particle(glm::vec2 _pos, glm::vec2 _vel, float _mass)
 {
-    
     // "overload" constructor, alternative:
     // Particle particle = Particle(pos,vel,acc);
     
@@ -31,37 +27,76 @@ Particle::Particle(glm::vec2 _pos, glm::vec2 _vel, float _mass)
     vel = _vel;
     mass = _mass;
     logo.load("tu.jpg");
-    
-//    path.lineTo(...);
-//    // draw on the path, level of gray means alpha
-//
-//    fbo.allocate(w,h,GL_LUMINANCE); //or GL_RED if you are using the programmable renderer
-//    fbo.begin();
-//    path.draw();
-//    fbo.end();
-//
-//    img.getTexture().setAlphaMask(fbo.getTexture());
+    ofLoadImage(p, "tu.jpg");
+    // do some stuff with tex
+    tex.readToPixels(p); // now all the pixels from tex are in pix
 
 }
+    
+
+
 
 void Particle::applyForce(glm::vec2 force)
 {
-    acc += force / mass;             // smaller mass greater acc
+    acc += force / mass;      // smaller mass greater acc
 }
+
+
 
 void Particle::update()
 {
     vel += acc;
     pos += vel;
     acc *= 0;
+
 }
+
 
 void Particle::draw()
 {
+    
+//       logo.draw(pos);
+    
+    
+//       unsigned char * pixels = logo.getPixels();
+//       int counter = 0;
+//       for(int i = 0; i < logo.width * logo.height; i++){
+//       if (pixels[i] > 250){
+//            counter ++;
+//    }
+    
+    // put some stuff in the pixels
+    
+//    int i = 0;
+//    while( i < p.size()) {
+//       char c = p[i];
+//    cout << "t:" << c << endl;
+//        i++;
+//    }
+    
+    ofSetColor(255);
+//    ofColor purple = ofColor(255,0,255);       // another way to create colors
+//    ofSetColor(purple);
+    ofDrawBitmapString("Hiiiiiiiiiiiiiiiii!",pos);
+
  
+    
+}
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------------------------
+    
 //    ofPushStyle();
 //    float hue = ofMap(mass, 0, 3, 100, 255); // mass changes hue
-    
+
 //    colors
 //    if (pos.x < ofGetWidth() * 0.32){
 //        ofSetColor(ofColor(255,hue,255));}
@@ -70,11 +105,19 @@ void Particle::draw()
 //    }else{
 //          ofSetColor(ofColor::fromHsb(hue,hue,250));
 //    }
- 
+
 //    ofDrawCircle(pos, mass * 2.0);  // mass changes size
 //    ofPopStyle();
 
 
-       logo.draw(pos);
-}
 
+
+
+
+
+    //    int ofImage_w = logo.width;
+    //    int ofImage_h = logo.height;
+    //    int type = logo.type;
+    //    int bpp = logo.bpp / 8;
+    //    for(){
+    //

@@ -20,11 +20,17 @@ public:
     void draw();
     
     ofImage logo ;
+    ofPixels p;
+    ofTexture tex;
+    
     ofPath path;
-    ofFbo fbo;
+
     
     glm::vec2 pos, vel, acc;
     float mass;
+    
+    int w, h, type, bpp;
+
 
     
 };
