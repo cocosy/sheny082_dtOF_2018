@@ -44,7 +44,7 @@ void ParticleSystem::update(int numNewParticles, int maxParticles)
         
         glm::vec2 vel = glm::vec2(0,ofRandom(0,-7));  //move up
         float mass    = ofRandom(.01, 3);
-        Particle particle = Particle(pos,vel,mass);  // start at system's position
+        Particle particle = Particle(pos- glm::vec2 (65,0),vel,mass);  // start at system's position
         particles.push_back(particle);
     }
 

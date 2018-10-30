@@ -11,6 +11,7 @@ public:
     void update();
     void draw();
     
+    void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
     
     void keyPressed(int key);
@@ -32,7 +33,12 @@ public:
     float time, sunRadius;
     
     ofColor sunColor, particleColor;
- 
+    
+    ofPolyline currentPolyline;
+    ofVec2f lastPoint;
+    vector <ofPolyline> polylines;
+    bool leftMouseButtonPressed;
+    float minDistance;
     
 };
 

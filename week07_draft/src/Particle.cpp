@@ -59,21 +59,6 @@ void Particle::update()
 void Particle::draw()
 {
     
-//       logo.draw(pos);
-//       unsigned char * pixels = logo.getPixels();
-//       int counter = 0;
-//       for(int i = 0; i < logo.width * logo.height; i++){
-//       if (pixels[i] > 250){
-//            counter ++;
-//    }
-//       put some stuff in the pixels
-//    int i = 0;
-//    while( i < p.size()) {
-//       char c = p[i];
-//    cout << "t:" << c << endl;
-//        i++;
-//    }
-    
     int widthStep = 10;
     int heightStep = 5;
 
@@ -97,6 +82,8 @@ void Particle::draw()
     ofSetColor(particleColor);
     
     ofDrawBitmapString("Hiiiiiiiiiiiiiiiii!",pos);
+    
+
  
     //    ofColor purple = ofColor(255,0,255);    // another way to create colors
     //    ofSetColor(purple);

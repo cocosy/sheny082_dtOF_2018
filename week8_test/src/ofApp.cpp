@@ -1,107 +1,82 @@
-
 #include "ofApp.h"
 
-//--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::update()
+{
+    // Curve center
+    float cx = ofGetWidth() * 0.5f ;
+    float cy = ofGetHeight() * 0.5f ;
+    //float cz = 0.f ;
     
-    // Create some polylines!
-    straightSegmentPolyline.addVertex(100, 100);  // Add a new point: (100, 100)
-    straightSegmentPolyline.addVertex(150, 150);  // Add a new point: (150, 150)
-    straightSegmentPolyline.addVertex(200, 100);  // etc...
-    straightSegmentPolyline.addVertex(250, 150);
-    straightSegmentPolyline.addVertex(300, 100);
+    // Curve radius
+    float rx = cx * 0.5f ;
+    float ry = cy * 0.5f ;
+    //float rz = rx ;
     
-    curvedSegmentPolyline.curveTo(350, 100);  // These curves are Catmull-Rom splines
-//  curvedSegmentPolyline.curveTo(350, 100);  // Necessary Duplicate for Control Point
-    curvedSegmentPolyline.curveTo(400, 150);
-    curvedSegmentPolyline.curveTo(450, 100);
-    curvedSegmentPolyline.curveTo(500, 150);
-//    curvedSegmentPolyline.curveTo(550, 100);
-    curvedSegmentPolyline.curveTo(550, 100);  // Necessary Duplicate for Control Point
+    // Angle animation
+    float dx = ofGetElapsedTimef() * 0.3f ;
+    float dy = -ofGetElapsedTimef() * 0.3f ;
+    // float dz = ofGetElapsedTimef() * 0.01f ;
     
-    closedShapePolyline.addVertex(600, 125);
-    closedShapePolyline.addVertex(700, 100);
-    closedShapePolyline.addVertex(800, 125);
-    closedShapePolyline.addVertex(700, 150);
-    closedShapePolyline.close();  // Connect first and last vertices
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::update(){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::draw(){
-    ofBackground(0);
-    ofSetLineWidth(2.0);  // Line widths apply to polylines
-    ofSetColor(255,100,0);
-    
-    float cx = ofGetWidth()/2;
-    float cy = 200;
-    float step = TWO_PI / 60;
-    for (float i = 0.0; i < TWO_PI; i+=step) {
+    // Push vertices to polyline
+    polyline.clear() ;
+    for( float angle = 0.f, angleMax = 2.f * PI ; angle < angleMax ; angle += 0.005f )
+    {
+        ofPoint p ;
+        p.x = rx * cos( dx + angle * 15.f ) ;
+        p.y = ry * sin( dy + angle * 23.f ) ;
+        p.rotateRad( angle, ofPoint( 1.f, 0.f, 0.f ) ) ;
+        p.x += cx;
+        p.y += cy;
+        // p.z += cz;
         
-        
-        if(i == 0.0) {
-            line.addVertex(cx + (400*cos(i)), cy+400, 400 * sin(i));
-        } else {
-            line.bezierTo( cx - (200*cos(i)), cy-100, 400 * sin(i),
-                          cx + (200*cos(i)), cy+600, 400 * sin(i),
-                          cx + (400*cos(i)), cy+400, 400 * sin(i));
-        }
+        polyline.addVertex( p );
     }
     
     
+    glm::vec2 center  = glm::vec2 (ofGetWidth() * 0.5, ofGetHeight() * 0.5);
+    int nRotations    = 1;
+    float maxAngle    = PI * nRotations;                  // angle in radians
     
-    straightSegmentPolyline.draw();  // This is how we draw polylines
-    curvedSegmentPolyline.draw();  // Nice and easy, right?
-    closedShapePolyline.draw();
+    for (float theta = 0.; theta < maxAngle; theta += .1)    // increase angle (in radians)
+    {
+        float radius = 20 ;  // increase radius around spiral
+        
+        ofPoint Rb ;
+        Rb.x = center.x + (cos(theta) * radius * 9) * 2;
+        Rb.y = center.y + (sin(theta) * radius * 10 );
+        
+        pv.addVertex(Rb);
+        ofDrawCircle(Rb, 40);
+    }
+    
+    polyline2.lineTo(300, 50);
+    ofPoint point2(450,120);
+    polyline2.arc(point2,100,100,0,180);
+    
+    //    elementPositionPercent_02 += 0.0002f ;
+    //    if( elementPositionPercent_02 > 1.f ) elementPositionPercent_02 = 0.f ;
+    //    elementPosition_02 = polyline.getPointAtPercent( elementPositionPercent_02 ) ;
+    //
+    // Animate the disk on the curve
+    elementPositionPercent += 0.0002f ;
+    if( elementPositionPercent > 1.f ) elementPositionPercent = 0.f ;
+    elementPosition = polyline.getPointAtPercent( elementPositionPercent ) ;
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::draw()
+{   pv.draw();
+    polyline.draw() ;
+    ofDrawCircle( elementPosition, 15.f );
     
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
     
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
     
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
+    //    ofSetColor(ofColor::blue);
+    //    polyline2.draw();
+    //     ofDrawCircle( polyline2.getPointAtPercent(elementPositionPercent),30.f);
     
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-    
-}
-
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){
+    //type
+    //ofColor color = ofColor::fromHex(0xFFF200);
+    //ofSetColor(color)h;
+    //ofDrawBitmapString("hiiiiiiiiii",point2.pos);
     
 }

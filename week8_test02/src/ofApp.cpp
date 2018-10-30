@@ -1,54 +1,15 @@
+
 #include "ofApp.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    ofBackground(0);
-    
-    //rainbo setuo
     leftMouseButtonPressed = false;
     minDistance = 55.0;
-    
-    // create one particle system at center screen -- see ParticleSystem.cpp + ParticleSystem.hpp
-    
-    glm::vec2 pos = glm::vec2 (ofGetWidth() * 0.5, ofGetHeight() * 0.2);     // center screen
-    time = ofGetElapsedTimef();
-    ParticleSystem particleSystem = ParticleSystem(pos, time);
-    particleSystems.push_back(particleSystem);
-    
-    // setup general gravity force
-    
-    gravity = glm::vec2(0, .8);
-    
-    
-    // make a spiral
-    
-    center  = glm::vec2 (ofGetWidth() * 0.5, ofGetHeight() * 0.9);
-    int nRotations    = 5;
-    float maxAngle    = TWO_PI * nRotations;                  // angle in radians
-    
-    for (float theta = 0.; theta < maxAngle; theta += .1)    // increase angle (in radians)
-    {
-        float radius = (theta / maxAngle) * ofGetWidth() * .07;  // increase radius around spiral
-        
-        sunPos.x = center.x + (cos(theta) * radius * 4) * 2;
-        sunPos.y = center.y + (sin(theta) * radius);
-        
-        sun theSun = sun(sunPos,1.);
-        Sun.push_back(theSun);
-        
-            
-        }
-        
-    
-    bSpin = false;      // turn off spiral spinning
-    
-   
+ // isSavingPDF = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
     if (leftMouseButtonPressed) {
         ofVec2f mousePos(ofGetMouseX(), ofGetMouseY());
         if (lastPoint.distance(mousePos) >= minDistance) {
@@ -58,55 +19,21 @@ void ofApp::update(){
             lastPoint = mousePos;
         }
     }
-
-
-    for (int i =0; i<Sun.size();i++){
-        Sun[i].update(bSpin);
-    }
-    
-    for (int i=0; i<particleSystems.size(); i++){
-        particleSystems[i].applyForce(gravity);
-        particleSystems[i].update();
-    }
-    
-    // test collision
-    sunRadius =    ofGetHeight() * 0.3;
-    for (int j=0; j<Sun.size(); j++){
-    for (int i=0; i<particleSystems.size(); i++){
-        
-        bool  paddleCollided = particleSystems[i].testCollision(Sun[j].pos, sunRadius);
-        if (paddleCollided) {
-            Sun[j].applyForce(glm::vec2 (-0.7,0.4));
-            sunColor = ofColor(0,255,0);
-        } else {particleColor = ofColor(0,0,255);}// particleColor = ofColor(0,0,255); }
-            
-        }
-       
-    }
-    
-
-
-        
-    
-  
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //if(clicked){
-    for (int i=0; i<particleSystems.size(); i++){
-        particleSystems[i].draw();
-        if(( ofGetElapsedTimef() -  particleSystems[i].time) > 10){
-            particleSystems.erase(particleSystems.begin());
-        }
-    }
-    for (int i =0; i<Sun.size();i++){
-        Sun[i].draw(bSpin);
-    }
-    //}
-  
     
-    //rainbow
+    // If isSavingPDF is true (i.e. the s key has been pressed), then
+    // anything in between ofBeginSaveScreenAsPDF(...) and ofEndSaveScreenAsPDF()
+    // Note: anything after ofBeginSaveScreenAsPDF(...) has been called
+    // is not drawn to the screen, it is instead rendered into a PDF file
+//    if (isSavingPDF) {
+//        ofBeginSaveScreenAsPDF("savedScreenshot_"+ofGetTimestampString()+".pdf");
+//    }
+    
+    ofBackground(0);
+    ofSetColor(255);  // White color for saved polylines
     for (int i=0; i<polylines.size(); i++) {
         
         // Drawing the polyline
@@ -123,52 +50,67 @@ void ofApp::draw(){
             float floatIndex = p/100.0 * (numPoints-1);
             ofVec3f tangent = polyline.getTangentAtIndexInterpolated(floatIndex) * tangentLength;
             
-            ofSetColor(ofColor::fromHex(0xFF0000));
+            ofColor colorWord = ofColor::fromHex(0xFF0000);
+            ofSetColor(colorWord);
             ofDrawBitmapString("R",point);
             
-            ofSetColor(ofColor::fromHex(0xFF7F00));
+            colorWord = ofColor::fromHex(0xFF7F00);
+            ofSetColor(colorWord);
             ofDrawBitmapString("A",point + ofVec3f(10, 0, 0));
             
-            ofSetColor(ofColor::fromHex(0xFFF200));
+            colorWord = ofColor::fromHex(0xFFF200);
+            ofSetColor(colorWord);
             ofDrawBitmapString("I",point + ofVec3f(20, 0, 0));
             
-            ofSetColor(ofColor::fromHex(0x1E9600));
+            colorWord = ofColor::fromHex(0x1E9600);
+            ofSetColor(colorWord);
             ofDrawBitmapString("N",point + ofVec3f(30, 0, 0));
             
-            ofSetColor(ofColor::fromHex(0x0000FF));
+            colorWord = ofColor::fromHex(0x0000FF);
+            ofSetColor(colorWord);
             ofDrawBitmapString("B",point + ofVec3f(40, 0, 0));
             
-            ofSetColor(ofColor::fromHex(0x4B0082));
+            colorWord = ofColor::fromHex(0x4B0082);
+            ofSetColor(colorWord);
             ofDrawBitmapString("O",point + ofVec3f(50, 0, 0));
             
-            ofSetColor(ofColor::fromHex(0x9400D3));
+            colorWord = ofColor::fromHex(0x9400D3);
+            ofSetColor(colorWord);
             ofDrawBitmapString("W",point + ofVec3f(60, 0, 0));
         }
     }
-     ofSetColor(255,255,255);
     
-}
-
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-    // create a new particle system at mouse position on click
-    time = ofGetElapsedTimef();
-    particleSystems.push_back( ParticleSystem(glm::vec2(x,y),time));
+    ofSetColor(255,255,255);  // Orange color for active polyline
+    currentPolyline.draw();
     
+    // Finish saving the PDF and reset the isSavingPDF flag to false
+    // Ending the PDF tells openFrameworks to resume drawing to the screen.
+//    if (isSavingPDF) {
+//        ofEndSaveScreenAsPDF();
+//        isSavingPDF = false;
+//    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+//    if (key == 's') {
+//        // isSavingPDF is a flag that lets us know whether or not save a PDF
+//        isSavingPDF = true;
+//    }
+}
+
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key){
     
-    if (key == 't'){
-        clicked = true;
-    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y ){
     
-    if (key == ' ')
-    {
-        bSpin = !bSpin;    // toggle wind
-    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button){
     
 }
 
@@ -176,7 +118,6 @@ void ofApp::keyPressed(int key){
 void ofApp::mousePressed(int x, int y, int button){
     if (button == OF_MOUSE_BUTTON_LEFT) {
         leftMouseButtonPressed = true;
-        
         currentPolyline.curveTo(x, y);  // Remember that x and y are the location of the mouse
         currentPolyline.curveTo(x, y);  // Necessary duplicate for first control point
         lastPoint.set(x, y);  // Set the x and y of a ofVec2f in a single line
@@ -191,7 +132,6 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    
     if (button == OF_MOUSE_BUTTON_LEFT) {
         leftMouseButtonPressed = false;
         currentPolyline.curveTo(x, y);   // Necessary duplicate for last control point
@@ -199,4 +139,19 @@ void ofApp::mouseReleased(int x, int y, int button){
         polylines.push_back(currentPolyline);
         currentPolyline.clear();  // Erase the vertices, allows us to start a new brush stroke
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg){
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo){
+    
 }

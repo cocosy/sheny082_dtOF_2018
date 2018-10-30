@@ -27,11 +27,6 @@ sun::sun(glm::vec2 _pos, float _mass){
   
 }
 
-//void sun::setup(glm::vec2 _pos, float _mass){
-//     pos     = _pos;
-//     mass    = _mass;
-//}
-
 
 void sun::applyForce(glm::vec2 force)
 {
@@ -147,8 +142,6 @@ void sun::update(bool bSpin)
     
 }
     
-    
-
 
 
 void sun::draw(bool bSpin)
