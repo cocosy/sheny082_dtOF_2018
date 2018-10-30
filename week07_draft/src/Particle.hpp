@@ -16,17 +16,19 @@ public:
     Particle(glm::vec2 _pos, glm::vec2 _vel, float _mass);
     
     void applyForce(glm::vec2 force);
+    void applyElasticForce();
     void update();
     void draw();
     
+
     ofImage logo ;
     ofPixels p;
     ofTexture tex;
     
-    ofPath path;
+    ofColor particleColor;
 
     
-    glm::vec2 pos, vel, acc;
+    glm::vec2 origPos, pos, vel, acc;
     float mass;
     
     int w, h, type, bpp;

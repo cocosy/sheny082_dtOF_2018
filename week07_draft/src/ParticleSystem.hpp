@@ -24,7 +24,7 @@ public:
     
     void applyForce(glm::vec2 force);   // applies force to particles
     
-    void update(int numNewParticles = 1, int maxParticles = 20);
+    void update(int numNewParticles = 1, int maxParticles = 40);
     /*
         numNewParticles:
             how many new particles to create each frame
@@ -34,10 +34,13 @@ public:
                 (defaults to 1000)
      */
     
+    bool testCollision(glm::vec2 sunPos, float sunRadius);
+    
+    
     void draw();
     
-    glm::vec2 pos;                      // origin of the particle system
+    glm::vec2 pos, sunPos;                      // origin of the particle system
     
     vector<Particle> particles;
-    float time;                         // stopwatch for particle sys
+    float time, particleRadi;                         // stopwatch for particle sys
 };

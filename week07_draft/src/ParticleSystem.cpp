@@ -36,28 +36,39 @@ void ParticleSystem::update(int numNewParticles, int maxParticles)
     
     // create new particles:
    
-
     for (int i=0; i<numNewParticles; i++)
     {
         float sinOfTime = sin(ofGetElapsedTimef());
         float cosOfTime = cos(ofGetElapsedTimef());
         
         
-        glm::vec2 vel = glm::vec2(ofRandom(-7,7),ofRandom(-7,7));  //move up
+        glm::vec2 vel = glm::vec2(0,ofRandom(0,-7));  //move up
         float mass    = ofRandom(.01, 3);
-        Particle particle = Particle(pos,vel,mass);     // start at system's position
+        Particle particle = Particle(pos,vel,mass);  // start at system's position
         particles.push_back(particle);
-
     }
 
     
+    // update particles; add repulsion:
     
-    // update particles:
+    glm::vec2 mousePos = glm::vec2(ofGetMouseX(), ofGetMouseY());
     
     for (int i=0; i<particles.size(); i++)
     {
-        particles[i].update();
+        glm::vec2 diff  = mousePos - particles[i].pos - glm::vec2 (65,0);
+   
+        float dist      = glm::length(diff);
+        
+        if (dist < 120. && dist != 0.)    // apply repulsion if distance is small (and not 0!)
+        {
+            glm::vec2 diffNorm  = diff / dist;
+            glm::vec2 repulsion = diffNorm * -.5;
+            particles[i].applyForce(repulsion);
+        }
+        particles[i].update();            // update
+        //particles[i].applyElasticForce(); // bounce back to starting position
     }
+    
     
     // erase old particles:
     
@@ -71,14 +82,37 @@ void ParticleSystem::update(int numNewParticles, int maxParticles)
 
 void ParticleSystem::draw()
 {
-    if( ofGetElapsedTimef() - time < 5){
+    for (int i=0; i<particles.size(); i++){
+        
+        particles[i].draw();
+        
+        
+    }
     //cout << "t:" << ofGetElapsedTimef() - time << endl; // if exist more than 10s
     
-    for (int i=0; i<particles.size(); i++)
-    {
-        particles[i].draw();
-    }
-    }
-    
 }
+
+
+bool ParticleSystem::testCollision(glm::vec2 sunPos,float sunRadius)
+{   particleRadi = 3;
+    bool collided = false;
+    // check each circle of the paddle for collision:
+   
+    for (int i=0; i<particles.size(); i++)
+    { //for (int j=0; j<315; j++){
+        glm::vec2 diff = particles[i].pos - sunPos;
+
+        float distance = glm::length(diff);
+
+          // cout << "t:" <<distance << endl;
+        if (distance <= particleRadi + sunRadius)
+        {
+            // collision!
+            collided = true;
+            break;  // exit for loop here! we don't want to continue checking
+        }
+    }
+    return collided;    // return the result
+}
+
 

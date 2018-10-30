@@ -14,6 +14,7 @@ Particle::Particle()
     pos = glm::vec2(0,0);
     vel = glm::vec2(0,0);
     acc = glm::vec2(0,0);
+    origPos = pos;
 }
 
 
@@ -24,15 +25,14 @@ Particle::Particle(glm::vec2 _pos, glm::vec2 _vel, float _mass)
     // Particle particle = Particle(pos,vel,acc);
     
     pos = _pos;
+    origPos = pos;
     vel = _vel;
     mass = _mass;
-    logo.load("tu.jpg");
-    ofLoadImage(p, "tu.jpg");
-    // do some stuff with tex
-    tex.readToPixels(p); // now all the pixels from tex are in pix
+    logo.load("tu.jpg");        //load picture
+    //    ofLoadImage(p, "tu.jpg");
+    //    tex.readToPixels(p); // now all the pixels from tex are in pix
 
 }
-    
 
 
 
@@ -41,6 +41,11 @@ void Particle::applyForce(glm::vec2 force)
     acc += force / mass;      // smaller mass greater acc
 }
 
+void Particle::applyElasticForce()
+{
+    glm::vec2 elastic = (origPos-pos) * 0.001;   // accelerate towards original position
+    applyForce(elastic);
+}
 
 
 void Particle::update()
@@ -48,25 +53,20 @@ void Particle::update()
     vel += acc;
     pos += vel;
     acc *= 0;
-
+    
 }
-
 
 void Particle::draw()
 {
     
 //       logo.draw(pos);
-    
-    
 //       unsigned char * pixels = logo.getPixels();
 //       int counter = 0;
 //       for(int i = 0; i < logo.width * logo.height; i++){
 //       if (pixels[i] > 250){
 //            counter ++;
 //    }
-    
-    // put some stuff in the pixels
-    
+//       put some stuff in the pixels
 //    int i = 0;
 //    while( i < p.size()) {
 //       char c = p[i];
@@ -74,16 +74,35 @@ void Particle::draw()
 //        i++;
 //    }
     
-    ofSetColor(255);
-//    ofColor purple = ofColor(255,0,255);       // another way to create colors
-//    ofSetColor(purple);
-    ofDrawBitmapString("Hiiiiiiiiiiiiiiiii!",pos);
+    int widthStep = 10;
+    int heightStep = 5;
 
- 
+    for (int i = 0; i < logo.getWidth(); i+=widthStep) {
+        for (int j = 0; j < logo.getHeight(); j+=heightStep) {
+            ofColor c = logo.getColor(i, j);
+        }
+    }
+   
+    // ofSetColor(c(pos));
     
+    ofPushStyle();
+    
+    // interpolate between colors!
+    ofColor cSlow    = ofColor::fromHex(0x005AA7);    // hex format: 0xRRGGBB
+    ofColor cFast    = ofColor::fromHex(0xE0EAFC);
+    
+    float percent    = ofMap(glm::length(vel), 0., 7., 0., 1., true);    // mix based on speed
+    ofColor particleColor   = cSlow.lerp(cFast, percent);    // "lerp" == interpolate
+    
+    ofSetColor(particleColor);
+    
+    ofDrawBitmapString("Hiiiiiiiiiiiiiiiii!",pos);
+ 
+    //    ofColor purple = ofColor(255,0,255);    // another way to create colors
+    //    ofSetColor(purple);
+  
+        ofPopStyle();
 }
-
-
 
 
 
