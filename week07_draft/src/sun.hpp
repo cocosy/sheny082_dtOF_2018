@@ -5,7 +5,7 @@ class sun {
     public:
     
     sun();                   // default
-    sun(glm::vec2 _pos, float _mass);
+    sun(glm::vec2 _pos, float _mass, ofColor _cSlow, ofColor _cFast, string _text);
     
    
     
@@ -28,7 +28,9 @@ class sun {
     glm::vec2 origPos, pos, vel, acc;
     float mass;
     
-    ofColor sunColor;
+    string text;
+    
+    ofColor sunColor,cSlow, cFast;
     
     
   

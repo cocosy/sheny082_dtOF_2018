@@ -17,14 +17,16 @@
 //}
 
 
-sun::sun(glm::vec2 _pos, float _mass){
+sun::sun(glm::vec2 _pos, float _mass, ofColor _cSlow, ofColor _cFast, string _text){
 
     pos     = _pos;
     origPos = pos;
     mass    = _mass;
     vel     = glm::vec2(0,0);
     acc     = glm::vec2(0,0);
-  
+    cSlow   = _cSlow;
+    cFast  = _cFast;
+    text   = _text;
 }
 
 
@@ -150,24 +152,25 @@ void sun::draw(bool bSpin)
     ofPushStyle();
     
     // interpolate between colors!
-    ofColor cSlow    = ofColor::fromHex(0xFFF200);    // hex format: 0xRRGGBB
-    ofColor cFast    = ofColor::fromHex(0xFF0000);
+//    ofColor cSlow; //   = ofColor::fromHex(0xFFF200);    // hex format: 0xRRGGBB
+//    ofColor cFast;   // = ofColor::fromHex(0xFF0000);
     
     float percent    = ofMap(glm::length(vel), 0., 7., 0., 1., true);    // mix based on speed
     ofColor sunColor   = cSlow.lerp(cFast, percent);    // "lerp" == interpolate
     
     ofSetColor(sunColor);
    
-    ofDrawBitmapString("hi",pos);
+    ofDrawBitmapString(text,pos);
     //    ofDrawCircle(pos, mass * 2.0);  // base radius on mass
     
     ofPopStyle();
     
     
     
-    ofColor lblCol(0); // black
-    if (bSpin) lblCol = ofColor::darkRed;
-    ofDrawBitmapStringHighlight("space: toggle spin", glm::vec2(20,20), lblCol);
+// ofColor lblCol(0); // black
+//    if (bSpin) lblCol = ofColor::darkRed;
+    ofDrawBitmapStringHighlight("space: Add Waterfall!", glm::vec2(20,20));
+    ofDrawBitmapStringHighlight("mousePress: Draw Rainbow!", glm::vec2(20,40));
     
     
 }

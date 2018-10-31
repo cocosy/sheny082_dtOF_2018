@@ -16,6 +16,8 @@ void ofApp::setup(){
     ParticleSystem particleSystem = ParticleSystem(pos, time);
     particleSystems.push_back(particleSystem);
     
+    
+    
     // setup general gravity force
     
     gravity = glm::vec2(0, .8);
@@ -27,14 +29,30 @@ void ofApp::setup(){
     int nRotations    = 5;
     float maxAngle    = TWO_PI * nRotations;                  // angle in radians
     
-    for (float theta = 0.; theta < maxAngle; theta += .1)    // increase angle (in radians)
+    for (float theta = 0.; theta < maxAngle; theta += .15)    // increase angle (in radians)
     {
         float radius = (theta / maxAngle) * ofGetWidth() * .07;  // increase radius around spiral
         
         sunPos.x = center.x + (cos(theta) * radius * 4) * 2;
         sunPos.y = center.y + (sin(theta) * radius);
         
-        sun theSun = sun(sunPos,1.);
+        sun2Pos.x = 100 + (cos(theta) * radius);
+        sun2Pos.y = 100 + (sin(theta) * radius);
+        
+        ofColor cSlow2  = ofColor::fromHex(0xFFF200);    // hex format: 0xRRGGBB
+        ofColor cFast2   = ofColor::fromHex(0xFF0000);
+        
+        ofColor cSlow   = ofColor::fromHex(0x009FFF);    // hex format: 0xRRGGBB
+        ofColor cFast   = ofColor::fromHex(0xec2f4b);
+        
+        
+        text1 = "ripple";
+        text2 = "sun";
+        
+        sun theSun = sun(sunPos,1,cSlow,cFast, text1);
+        sun theSun2 = sun(sun2Pos,1.,cSlow2, cFast2, text2);
+        Suns.push_back(theSun2);
+        
         Sun.push_back(theSun);
         
             
@@ -49,6 +67,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     
+   
+    
     if (leftMouseButtonPressed) {
         ofVec2f mousePos(ofGetMouseX(), ofGetMouseY());
         if (lastPoint.distance(mousePos) >= minDistance) {
@@ -62,6 +82,7 @@ void ofApp::update(){
 
     for (int i =0; i<Sun.size();i++){
         Sun[i].update(bSpin);
+        Suns[i].update(bSpin);
     }
     
     for (int i=0; i<particleSystems.size(); i++){
@@ -77,14 +98,12 @@ void ofApp::update(){
         bool  paddleCollided = particleSystems[i].testCollision(Sun[j].pos, sunRadius);
         if (paddleCollided) {
             Sun[j].applyForce(glm::vec2 (-0.7,0.4));
-            sunColor = ofColor(0,255,0);
-        } else {particleColor = ofColor(0,0,255);}// particleColor = ofColor(0,0,255); }
+          }
             
         }
        
     }
     
-
 
         
     
@@ -93,6 +112,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    
+
     //if(clicked){
     for (int i=0; i<particleSystems.size(); i++){
         particleSystems[i].draw();
@@ -102,6 +123,7 @@ void ofApp::draw(){
     }
     for (int i =0; i<Sun.size();i++){
         Sun[i].draw(bSpin);
+        Suns[i].draw(bSpin);
     }
     //}
   
@@ -115,12 +137,12 @@ void ofApp::draw(){
         
         // Drawing evenly spaced tangents along the polyline
         //  Note: These are pretty exaggerated tangents, like Figure 16 (right)
-        ofSetColor(255, 50);
+//        ofSetColor(255, 50);
         float numPoints = polyline.size();
         float tangentLength = 300;
-        for (int p=0; p<500; p+=1) {
-            ofVec3f point = polyline.getPointAtPercent(p/100.0);
-            float floatIndex = p/100.0 * (numPoints-1);
+        for (int p=0; p<100; p+=1) {
+            ofVec3f point = polyline.getPointAtPercent(p/50.0);
+            float floatIndex = p/50.0 * (numPoints-1);
             ofVec3f tangent = polyline.getTangentAtIndexInterpolated(floatIndex) * tangentLength;
             
             ofSetColor(ofColor::fromHex(0xFF0000));
@@ -145,18 +167,16 @@ void ofApp::draw(){
             ofDrawBitmapString("W",point + ofVec3f(60, 0, 0));
         }
     }
-     ofSetColor(255,255,255);
+//     ofSetColor(255,255,255);
     
 }
 
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-    // create a new particle system at mouse position on click
-    time = ofGetElapsedTimef();
-    particleSystems.push_back( ParticleSystem(glm::vec2(x,y),time));
-    
-}
+//void ofApp::mouseReleased(int x, int y, int button){
+//
+//
+//}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
@@ -167,7 +187,12 @@ void ofApp::keyPressed(int key){
     
     if (key == ' ')
     {
-        bSpin = !bSpin;    // toggle wind
+        //bSpin = !bSpin;    // toggle wind
+        
+        // create a new particle system at mouse position on click
+        time = ofGetElapsedTimef();
+        particleSystems.push_back( ParticleSystem(glm::vec2(ofRandom(200,ofGetWidth() * 0.7), ofRandom(100,250)),time));
+
     }
     
 }
@@ -191,6 +216,7 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+    
     
     if (button == OF_MOUSE_BUTTON_LEFT) {
         leftMouseButtonPressed = false;

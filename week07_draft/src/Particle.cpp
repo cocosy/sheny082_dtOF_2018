@@ -81,7 +81,7 @@ void Particle::draw()
     
     ofSetColor(particleColor);
     
-    ofDrawBitmapString("Hiiiiiiiiiiiiiiiii!",pos);
+    ofDrawBitmapString("wwwaaattteeerrrfffaaallllll!",pos);
     
 
  

@@ -104,7 +104,7 @@ bool ParticleSystem::testCollision(glm::vec2 sunPos,float sunRadius)
 
         float distance = glm::length(diff);
 
-          // cout << "t:" <<distance << endl;
+         
         if (distance <= particleRadi + sunRadius)
         {
             // collision!

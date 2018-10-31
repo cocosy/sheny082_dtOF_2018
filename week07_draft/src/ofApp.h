@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ParticleSystem.hpp"
 #include "sun.hpp"
+#include "fly.hpp"
 
 class ofApp : public ofBaseApp{
     
@@ -23,16 +24,20 @@ public:
     
     vector<ParticleSystem> particleSystems;
     vector<sun> Sun;
+    vector<sun> Suns;
 
     glm::vec2 gravity;
     glm::vec2 center;
-    glm::vec2 sunPos;
+    glm::vec2 sunPos, sun2Pos;
+    
+    string text1, text2;
+    
     
     bool paddleCollided;
     
     float time, sunRadius;
     
-    ofColor sunColor, particleColor;
+    ofColor sunColor, particleColor,cSlow,cFast, cSlow2, cFast2;
     
     ofPolyline currentPolyline;
     ofVec2f lastPoint;
