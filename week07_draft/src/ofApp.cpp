@@ -5,7 +5,7 @@ void ofApp::setup(){
     
     ofBackground(0);
     
-    //rainbo setuo
+    //rainbow setup
     leftMouseButtonPressed = false;
     minDistance = 55.0;
     
