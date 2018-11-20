@@ -9,7 +9,7 @@ void ofApp::setup(){
     cout << bodyMesh << endl;
     meshBody = body.getMesh(0);
     
-    meshBody.getVertices().
+    meshBody.getVertices();
     
     
     //load image
