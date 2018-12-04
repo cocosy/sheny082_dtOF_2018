@@ -8,7 +8,7 @@ void ofApp::setup(){
     body.setPosition(ofGetWidth()/20, (float)ofGetHeight() * -0.3 , 0);         //position
     //    body.setRotation(0, 180, 1, 0, 0);                                    //rotate to face the front
     //    body.setRotation(0, 180, 0, 1, 0);
-    body.setRotation(0, 180, 0, 0, 1);
+    //    body.setRotation(0, 180, 0, 0, 1);
     
     meshBody = body.getMesh(0);                                                 //create meshBody
     
@@ -27,7 +27,7 @@ void ofApp::setup(){
     img.resize(200, 133);
     
     
-
+    
     float intensityThreshold = 150.0;
     int w = img.getWidth();
     int h = img.getHeight();
@@ -185,4 +185,3 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
-

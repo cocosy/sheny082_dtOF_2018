@@ -1,0 +1,4 @@
+ofxAssimpModelLoader
+ofxCv
+ofxGui
+ofxOpenCv
