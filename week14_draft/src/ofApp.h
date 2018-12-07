@@ -28,13 +28,21 @@ public:
     ofParameter<bool> drawFaces, drawWireframes, drawVertices;
     ofImage img;
     
+//   Plane mesh;     // plane stores an ofMesh
+    
+    ofPlanePrimitive plane;
+    
     ofxAssimpModelLoader body;
     ofEasyCam cam;
     ofxPanel gui;
     ofMesh meshBody;
+    ofNode meshNode;
     ofMesh mesh;
     
+    
     vector<ofVec3f> offsets;
+   //vector<Vert> Vert;
+   
 };
     
     
