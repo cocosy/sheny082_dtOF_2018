@@ -28,16 +28,26 @@ public:
     ofParameter<bool> drawFaces, drawWireframes, drawVertices;
     ofImage img;
     
-//   Plane mesh;     // plane stores an ofMesh
+    Body mesh;     // Body stores an ofMesh
     
     ofPlanePrimitive plane;
+    ofBoxPrimitive box;
     
     ofxAssimpModelLoader body;
     ofEasyCam cam;
     ofxPanel gui;
     ofMesh meshBody;
     ofNode meshNode;
-    ofMesh mesh;
+
+    ofMesh meshCopy;
+    bool orbiting;
+    float startOrbitTime;
+    
+    // These variables will let us store the polar coordinates of each vertex
+    vector<float> distances;
+    vector<float> angles;
+    ofVec3f meshCentroid;
+
     
     
     vector<ofVec3f> offsets;

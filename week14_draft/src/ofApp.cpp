@@ -5,25 +5,17 @@ void ofApp::setup(){
     
     ofBackground(0);
     
-    //setup plane
-    plane.set(320,240);   ///dimensions for width and height in pixels
-    plane.setPosition(-20,20, 50); /// position in x y z
-    plane.setResolution(10, 10); /// this resolution (as columns and rows) is enough
-    
     body.loadModel("woman.obj",true);
-    body.setPosition(ofGetWidth()/20, (float)ofGetHeight() * -0.3 , 0); //position
+//  body.setPosition(ofGetWidth()/20, (float)ofGetHeight() * -0.3 , 0); //position
     
-    meshBody = body.getMesh(0);                                         //create meshBody
+    meshBody = body.getMesh(0);                                          //create meshBody
+    meshNode.setPosition(glm::vec3(ofGetWidth()*.5, ofGetHeight()*.5+30,500));//position
+    meshNode.rotateDeg(180, 0,0,1);
     
-    //change position of meshBody by moving all points
-    int numVerts = meshBody.getNumVertices();
-    for (int i=0; i<numVerts; ++i) {
-        glm::vec3 vert = meshBody.getVertex(i);
-//        vert.y -= 30;
-//        vert.z += 480;
-        meshBody.setVertex(i, vert);
-    }
-    
+    //setup plane
+    plane.set(320,240);             //dimensions for width and height in pixels
+    plane.setPosition(0,30, -50);  // position in x y z
+    plane.setResolution(15, 15);    // this resolution (as columns and rows) is enough
     
     //load image
     img.load("fish.png");
@@ -56,9 +48,31 @@ void ofApp::setup(){
     gui.add( drawFaces.set("draw faces", true) );
     gui.add( drawWireframes.set("draw wires", false) );
     gui.add( drawVertices.set("draw vertices", false) );
+    
+   
+    
+    meshCentroid = meshBody.getCentroid();
+    
+    // Now that we know our centroid, we need to know the polar coordinates
+    // (distance and angle) of each vertex relative to that center point.
+    // We've found the distance between points before, but what about the angle?
+    // This is where atan2 comes in.  atan2(y, x) takes an x and y value and returns
+    // the angle relative to the origin (0,0).  If we want the angle between two
+    // points (x1, y1) and (x2, y2) then we just need to use atan2(y2-y1, x2-x1).
+     int numVerts = meshBody.getNumVertices();
+    for (int i=0; i<numVerts; ++i) {
+        ofVec3f vert = meshBody.getVertex(i);
+        float distance = vert.distance(meshCentroid);
+        float angle = atan2(vert.y-meshCentroid.y, vert.x-meshCentroid.x);
+        distances.push_back(distance);
+        angles.push_back(angle);
+    }
+    
+    // These variables will allow us to toggle orbiting on and off
+    orbiting = false;
+    startOrbitTime = 0.0;
+    meshCopy = meshBody;            //for orbiting
 
-    meshNode.setPosition(glm::vec3(ofGetWidth()*.5, ofGetHeight()*.5,0));
-    meshNode.rotateDeg(180, 0,0,1);
 }
 
 
@@ -78,7 +92,7 @@ void ofApp::update(){
         
         
         float noise =
-        ofSignedNoise ( planeVerts[i].x * 0.01,    // x pos
+        ofSignedNoise (planeVerts[i].x * 0.01,    // x pos
                        planeVerts[i].y * 0.01,    // y pos ; noiseScale.get().y
                        time * 0.5    // time (z) to animate ; noiseFreq
                        );
@@ -89,65 +103,67 @@ void ofApp::update(){
     
     
    
-    glm::vec2 target = glm::vec2(ofGetMouseX(), ofGetMouseY()); //mouse position
+//    glm::vec2 target = glm::vec2(ofGetMouseX(), ofGetMouseY()); //mouse position
+//    //move with mouth using position
+//    glm::vec2 direction = target - meshNode.getPosition();
+//    meshNode.setPosition( meshNode.getPosition() + direction*0.001);
 
     // make points vibrate with noise
     int numVerts = meshBody.getNumVertices();
     for (int i=0; i<numVerts; ++i) {
         glm::vec3 vert = meshBody.getVertex(i);
-        
-        glm::vec2 position;         // get the vert postion in vec2
-        position.x = vert.x;
-        position.y = vert.y;
-        
-//        glm::vec2 directionVec = target - position;      // the direction
-//
-//        //moving in the direction
-//        vert.x += directionVec.x * 0.0001;
-//        vert.y += directionVec.y * 0.0001;
-        
-        //moise
+
+        //noise
         float timeScale = 3.0;
         float displacementScale = 0.25;
         glm::vec3 timeOffsets = offsets[i];
-        
         
         vert.x += (ofSignedNoise(time*timeScale+timeOffsets.x)) * displacementScale;
         vert.y += (ofSignedNoise(time*timeScale+timeOffsets.y)) * displacementScale;
         vert.z += (ofSignedNoise(time*timeScale+timeOffsets.z)) * displacementScale;
         meshBody.setVertex(i, vert);
-    }
-    glm::vec2 direction = target - meshNode.getPosition();
-    meshNode.setPosition( meshNode.getPosition() + direction*0.001);
+        box.set(0.01,0.01,0.01);
+        box.setPosition(vert);
+    };
     
+    
+    if (orbiting) {
+        int numVerts = meshBody.getNumVertices();
+        for (int i=0; i<numVerts; ++i) {
+            ofVec3f vert = meshBody.getVertex(i);
+            float distance = distances[i];
+            float angle = angles[i];
+            float elapsedTime = ofGetElapsedTimef() - startOrbitTime;
+            
+            // Lets adjust the speed of the orbits such that things that are closer to
+            // the center rotate faster than things that are more distant
+            float speed = ofMap(distance, 0, 200, 1, 0.25, true);
+            
+            // To find the angular rotation of our vertex, we use the current time and
+            // the starting angular rotation
+            float rotatedAngle = elapsedTime * speed + angle;
+            
+            // Remember that our distances are calculated relative to the centroid
+            // of the mesh, so we need to shift everything back to screen
+            // coordinates by adding the x and y of the centroid
+            vert.x = distance * cos(rotatedAngle) + meshCentroid.x;
+            vert.y = distance * sin(rotatedAngle) + meshCentroid.y;
+            
+            meshBody.setVertex(i, vert);
+        }
+    }
+
+    
+
 }
 
-// A typical design pattern for using Perlin noise uses a couple parameters:
-// ofSignedNoise(time*timeScale+timeOffset)*displacementScale
-//     ofSignedNoise(time) gives us noise values that change smoothly over
-//         time
-//     ofSignedNoise(time*timeScale) allows us to control the smoothness of
-//         our noise (smaller timeScale, smoother values)
-//     ofSignedNoise(time+timeOffset) allows us to use the same Perlin noise
-//         function to control multiple things and have them look as if they
-//         are moving independently
-//     ofSignedNoise(time)*displacementScale allows us to change the bounds
-//         of the noise from [-1, 1] to whatever we want
-// Combine all of those parameters together, and you've got some nice
-// control over your noise
-
-
-
-
-//-----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
 
 
 
 
 void ofApp::draw(){
     
-    
-    mesh.draw();
 //    cam.begin();
     ofEnableDepthTest();
     ofDrawAxis(100);
@@ -155,6 +171,7 @@ void ofApp::draw(){
     ofPushMatrix();
     ofMultMatrix( meshNode.getGlobalTransformMatrix());
     plane.drawWireframe();
+    box.drawFaces();
     
     if (drawFaces){
 
@@ -186,7 +203,14 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
     if(key == ' '){
         cout << "t:" << body.getPosition()<< endl;
-    }
+    };
+    
+        if (key == 'o') {
+            orbiting = !orbiting; // This inverts the boolean
+            startOrbitTime = ofGetElapsedTimef();
+            meshBody = meshCopy; // This restores the mesh to its original values
+        }
+
 }
 
 //--------------------------------------------------------------
