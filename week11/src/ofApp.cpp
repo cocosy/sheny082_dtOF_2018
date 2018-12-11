@@ -1,5 +1,7 @@
 #include "ofApp.h"
 
+
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -17,23 +19,23 @@ void ofApp::setup(){
     image.resize(200, 133);
     mesh.setMode(OF_PRIMITIVE_POINTS);
     mesh.enableColors();
-    
-    float intensityThreshold = 150.0;
-    int w = image.getWidth();
-    int h = image.getHeight();
-    for (int x=0; x<w; ++x) {
-        for (int y=0; y<h; ++y) {
-            ofColor c = image.getColor(x, y);
-            float intensity = c.getLightness();
-            if (intensity >= intensityThreshold) {
-                glm::vec3 pos(x*5, y*5, 0.0);
-                mesh.addVertex(pos);
-                // When addColor(...), the mesh will automatically convert
-                // the ofColor to an ofFloatColor
-                mesh.addColor(c);
-            }
-        }
-    }
+//
+//    float intensityThreshold = 150.0;
+//    int w = image.getWidth();
+//    int h = image.getHeight();
+//    for (int x=0; x<w; ++x) {
+//        for (int y=0; y<h; ++y) {
+//            ofColor c = image.getColor(x, y);
+//            float intensity = c.getLightness();
+//            if (intensity >= intensityThreshold) {
+//                glm::vec3 pos(x*5, y*5, 0.0);
+//                mesh.addVertex(pos);
+//                // When addColor(...), the mesh will automatically convert
+//                // the ofColor to an ofFloatColor
+//                //mesh.addColor(c);
+//            }
+//        }
+//    }
     
     
     mesh.setMode(OF_PRIMITIVE_LINES);
@@ -63,8 +65,8 @@ void ofApp::setup(){
     }
     
     body.setPosition(ofGetWidth()/20, (float)ofGetHeight() * -0.3 , 0);     //position
-//    body.setRotation(0, 180, 1, 0, 0);                                    //rotate to face the front
-//    body.setRotation(0, 180, 0, 1, 0);
+//  body.setRotation(0, 180, 1, 0, 0);                                    //rotate to face the front
+//  body.setRotation(0, 180, 0, 1, 0);
     body.setRotation(0, 180, 0, 0, 1);
     
     

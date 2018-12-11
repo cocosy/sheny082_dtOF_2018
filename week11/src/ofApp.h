@@ -37,8 +37,7 @@ class ofApp : public ofBaseApp{
     
      ofMesh mesh;
     
-    
+    struct point;
 
-    
 		
 };

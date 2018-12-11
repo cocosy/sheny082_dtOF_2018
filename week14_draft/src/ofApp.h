@@ -28,18 +28,24 @@ public:
     ofParameter<bool> drawFaces, drawWireframes, drawVertices;
     ofImage img;
     
-    Body mesh;     // Body stores an ofMesh
+//  B mesh;     // plane stores an ofMesh
     
     ofPlanePrimitive plane;
     ofBoxPrimitive box;
     
     ofxAssimpModelLoader body;
+
     ofEasyCam cam;
     ofxPanel gui;
     ofMesh meshBody;
     ofNode meshNode;
-
     ofMesh meshCopy;
+    
+    ofMesh meshCopyLine;
+    
+   
+    
+    
     bool orbiting;
     float startOrbitTime;
     
@@ -47,11 +53,15 @@ public:
     vector<float> distances;
     vector<float> angles;
     ofVec3f meshCentroid;
-
     
     
+    
+    ofPolyline line;
     vector<ofVec3f> offsets;
    //vector<Vert> Vert;
+    
+ 
+   
    
 };
     
