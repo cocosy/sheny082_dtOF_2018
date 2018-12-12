@@ -1,29 +1,35 @@
 #include "ofApp.h"
+//credit to https://openframeworks.cc/ofBook/chapters/generativemesh.html for exmaple on generating mesh from image
+
 
 
 ofMesh meshLine(const ofMesh &mesh){
     ofMesh lines;
-    lines.setMode(OF_PRIMITIVE_LINES);
     ofVec3f centroid = mesh.getCentroid();
-    //      int numVerts = mesh.getNumVertices();
+    int numVerts = mesh.getNumVertices();
     
-//    meshNode.setPosition(glm::vec3(ofGetWidth()*.5, ofGetHeight()*.5 + 30,500));//position
-//    meshNode.rotateDeg(180, 0,0,1);
     
-    for(ofVec3f vertex : mesh.getVertices()){       //int i=0; i<numVerts; ++i
-        double length = sin(ofGetElapsedTimef()) * 50.0;
-        //            ofVec3f vertex = mesh.getVertex(i);
+    for(int i=0; i<numVerts; ++i){       //ofVec3f vertex : mesh.getVertices()
+        double length = sin(ofGetElapsedTimef()) * 20.0;
+        ofVec3f vertex = mesh.getVertex(i);
         ofVec3f direction = (vertex - centroid).getNormalized();
-        ofVec3f farther_vertex = vertex - direction * length;
+        ofVec3f farther_vertex = vertex + direction * length;
         //             cout << "t:" << vertex << endl;
-        size_t idx = mesh.getNumVertices();
+        size_t idx = lines.getNumVertices();
         lines.addVertex(vertex);
         lines.addVertex(farther_vertex);
         
+        lines.enableColors();
+        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255), ofRandom(100));
         lines.addIndex(idx);
         lines.addIndex(idx + 1);
+        lines.disableColors();
+
+        
     }
-    
+//    lines.setPosition(glm::vec3(ofGetWidth()*.5, ofGetHeight()*.5 + 30,500));//position
+//    lines.rotateDeg(180, 0,0,1);
+    lines.setMode(OF_PRIMITIVE_LINES); //OF_PRIMITIVE_LINE
     return lines;
 };
 
@@ -75,12 +81,24 @@ void ofApp::setup(){
         }
     }
     
-    //GUI setup
-    gui.setup();
-    //set up three drawing methods
-    gui.add( drawFaces.set("draw faces", true) );
-    gui.add( drawWireframes.set("draw wires", false) );
-    gui.add( drawVertices.set("draw vertices", false) );
+//    //GUI setup
+//    gui.setup();
+//    //set up three drawing methods
+//    gui.add( drawFaces.set("draw faces", true) );
+//    gui.add( drawWireframes.set("draw wires", false) );
+//    gui.add( drawVertices.set("draw vertices", false) );
+    
+    light.setup();
+    light.setDirectional();
+    light.setDiffuseColor( ofColor::wheat );
+    light.setPosition(0, 200, 200);
+    light.rotateDeg(225, 0, 1, 0);  // turn around to face plane + extra
+    light.enable();
+    bLighting  = false;
+    
+     drawFaces.set(true) ;
+     drawWireframes.set(false) ;
+     drawVertices.set(false) ;
     
    
     
@@ -113,6 +131,7 @@ void ofApp::update(){
     
     float time = ofGetElapsedTimef();
     
+    //plane noise
     auto& planeVerts = plane.getMesh().getVertices();
     for (int i=0; i<planeVerts.size(); i++)
     {
@@ -127,11 +146,10 @@ void ofApp::update(){
     }
     
     
-   
-//    glm::vec2 target = glm::vec2(ofGetMouseX(), ofGetMouseY()); //mouse position
-//    //move with mouse using position
-//    glm::vec2 direction = target - meshNode.getPosition();
-//    //meshNode.setPosition( meshNode.getPosition() + direction*0.001);
+   //move with mouse using position
+    glm::vec2 target = glm::vec2(ofGetMouseX(), ofGetMouseY()); //mouse position
+    glm::vec2 direction = target - meshNode.getPosition();
+    //meshNode.setPosition( meshNode.getPosition() + direction*0.001);
 
     // make points vibrate with noise
     int numVerts = meshBody.getNumVertices();
@@ -149,40 +167,41 @@ void ofApp::update(){
         vert.z += (ofSignedNoise(time*timeScale+timeOffsets.z)) * displacementScale;
         
         //vert = vert - direction*0.001;
-        meshBody.setVertex(i, vert);
-        //ofDrawBox(vert, 2,);
+        meshBody.setVertex(i, vert - direction*0.001);
     };
     
     
+    //orbiting
     if (orbiting) {
         int numVerts = meshBody.getNumVertices();
         for (int i=0; i<numVerts; ++i) {
+            
             ofVec3f vert = meshBody.getVertex(i);
             float distance = distances[i];
             float angle = angles[i];
             float elapsedTime = ofGetElapsedTimef() - startOrbitTime;
-            
+
             // Lets adjust the speed of the orbits such that things that are closer to
             // the center rotate faster than things that are more distant
             float speed = ofMap(distance, 0, 200, 1, 0.25, true);
-            
+
             // To find the angular rotation of our vertex, we use the current time and
             // the starting angular rotation
             float rotatedAngle = elapsedTime * speed + angle;
-            
+
             // Remember that our distances are calculated relative to the centroid
             // of the mesh, so we need to shift everything back to screen
             // coordinates by adding the x and y of the centroid
-            vert.x = distance * sin(rotatedAngle) + meshCentroid.x;
-            vert.y = distance * sin(rotatedAngle) + meshCentroid.y;
-            vert.z = vert.z - 50;
-            
-//            vert.x = vert.x;
+//            vert.x = distance * cos(rotatedAngle) + meshCentroid.x;
 //            vert.y = distance * sin(rotatedAngle) + meshCentroid.y;
-//            vert.z = distance * 0.8 + meshCentroid.z - 50;
+//            vert.z = vert.z ;
+
+            vert.x = vert.x;
+            vert.y = distance * sin(rotatedAngle) + meshCentroid.y;
+            vert.z = distance * 0.8 + meshCentroid.z - 50;
 
             // cout << "t:" << sin(rotatedAngle) << endl;
-            meshBody.setVertex(i, vert );
+            meshBody.setVertex(i, vert);
        
         }
     }
@@ -197,41 +216,73 @@ void ofApp::update(){
 void ofApp::draw(){
 //    ofEnableAlphaBlending();
 //    ofSetColor(30,30,30,30);
-
     
+    
+
 //    cam.begin();
     ofEnableDepthTest();
     ofDrawAxis(100);
 
-    meshBody.draw();
-    meshLine(meshCopyLine).draw();
+    //meshBody.draw();
+   
     ofPushMatrix();
-  
     ofMultMatrix(meshNode.getGlobalTransformMatrix());
-    plane.drawWireframe();
+    
+    meshLine(meshBody).draw();
+   
+ 
+    
+    if (bLighting) ofEnableLighting();
+    
+//    plane.drawWireframe();
   
     
+    if (bLighting) {
+        ofPushStyle();
+        ofSetColor(light.getDiffuseColor());
+        light.draw();
+        ofPopStyle();
+    }
+  
     if (drawFaces){
 
         meshBody.drawFaces();
+        ofSetColor(255, 255, 255);
+        plane.drawWireframe();
     }
     if (drawWireframes){
 
         meshBody.drawWireframe();
+        ofSetColor(255, 255, 255);
+        plane.drawWireframe();
     }
     if (drawVertices){
         //body.enableColors();
         // body.drawVertices();
         meshBody.drawVertices();
+        ofSetColor(255, 255, 255);
+        plane.drawVertices();
         //meshBody.disableColors();
     }
-    
+    if (bLighting) ofDisableLighting();
     ofPopMatrix();
+    
+    
+    // draw info
+    stringstream ss;
+    ss
+    << "use [L]ighting: \t" << bLighting << endl
+    << "use [O]rbit: \t" << bNormals << endl
+    << "draw [F]aces: \t" << drawFaces << endl
+    << "draw [V]ertices: \t" << drawVertices << endl
+    << "draw [W]ireframe: \t" << drawWireframes;
+    
+    ofDrawBitmapStringHighlight( ss.str(), 20,20 );
     
     ofDisableDepthTest();
     
-//   cam.end();
-    gui.draw();
+//    cam.end();
+//    gui.draw();
     
     
 }
@@ -239,15 +290,33 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == ' '){
+    if(key == 'f'){
 //        cout << "t:" << body.getPosition()<< endl;
-    };
-    
-        if (key == 'o') {
+        drawFaces.set(true);
+        drawWireframes.set(false);
+        drawVertices.set(false);
+    }
+    else if(key == 'w'){
+        //        cout << "t:" << body.getPosition()<< endl;
+        drawFaces.set(false);
+        drawWireframes.set(true);
+        drawFaces.set(false);
+    }
+    else if(key == 'v'){
+        //        cout << "t:" << body.getPosition()<< endl;
+        drawVertices.set(true);
+        drawWireframes.set(false);
+        drawFaces.set(false);
+    }
+    else if(key == 'l'){
+               cout << "t:" << bLighting<< endl;
+        bLighting = !bLighting;
+    }
+    if (key == 'o') {
             orbiting = !orbiting; // This inverts the boolean
             startOrbitTime = ofGetElapsedTimef();
             meshBody = meshCopy; // This restores the mesh to its original values
-        }
+    };
 
 }
 

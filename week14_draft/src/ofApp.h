@@ -42,8 +42,7 @@ public:
     ofMesh meshCopy;
     
     ofMesh meshCopyLine;
-    
-   
+    ofMesh mesh;
     
     
     bool orbiting;
@@ -54,15 +53,13 @@ public:
     vector<float> angles;
     ofVec3f meshCentroid;
     
-    
-    
     ofPolyline line;
     vector<ofVec3f> offsets;
    //vector<Vert> Vert;
     
- 
-   
-   
+       ofLight light;
+     bool bLighting, bNormals, bWireframe;
+
 };
     
     
